@@ -4,6 +4,8 @@ This MicroEJ project helps to configure and test the touch panel:
 - Calibration: position of touch panel on the screen.
 - Drag distribution: the drag events position must be regularly distributed when swiping.
 
+It is useful to run this project to test the BSP touch panel driver and make sure the events sent to the Java MicroUI library are correct.
+ 
 ## Project Setup
 First of all, you have to download the repository by using the Download button or by cloning the repository.
 After having retrieved the repository content, open your MicroEJ and then import Existing project into workspace by selecting either the ZIP file or the root directory.
