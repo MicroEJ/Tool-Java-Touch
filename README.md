@@ -1,5 +1,5 @@
 # Overview
-This project helps to configure the touch panel.
+This MicroEJ project helps to configure and test the touch panel:
 - Filtering: drag events must not be generated when a finger is pressed but not moving.
 - Calibration: position of touch panel on the screen.
 - Drag distribution: the drag events position must be regularly distributed when swiping.
