@@ -94,8 +94,8 @@ public class TestThreshold extends AbstractTest {
 	}
 
 	@Override
-	protected void cleanScreen(boolean flush) {
-		super.cleanScreen(false);
+	protected void cleanScreen(int color, boolean flush) {
+		super.cleanScreen(color, false);
 
 		int centerX = this.environment.x + this.environment.width / 2;
 		int centerY = this.environment.y + this.environment.height / 2;
@@ -103,15 +103,15 @@ public class TestThreshold extends AbstractTest {
 		int buttonY = centerY - BUTTON_HEIGHT / 2;
 		this.environment.g.setColor(Colors.BLACK);
 		this.environment.g.drawRect(buttonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
-		int color;
+		int buttonColor;
 		if (this.pressed) {
-			color = Colors.SILVER;
+			buttonColor = Colors.SILVER;
 		} else if (this.dragged) {
-			color = Colors.RED;
+			buttonColor = Colors.RED;
 		} else {
-			color = Colors.GRAY;
+			buttonColor = Colors.GRAY;
 		}
-		this.environment.g.setColor(color);
+		this.environment.g.setColor(buttonColor);
 		this.environment.g.fillRect(buttonX + 1, buttonY + 1, BUTTON_WIDTH - 1, BUTTON_HEIGHT - 1);
 		this.environment.g.setColor(Colors.BLACK);
 		this.environment.g.drawString("Button", centerX, centerY, GraphicsContext.HCENTER | GraphicsContext.VCENTER);

@@ -60,8 +60,8 @@ public class TestCalibration extends AbstractTest {
 	}
 
 	@Override
-	protected void cleanScreen(boolean flush) {
-		super.cleanScreen(false);
+	protected void cleanScreen(int color, boolean flush) {
+		super.cleanScreen(color, false);
 		this.environment.g.setColor(Colors.SILVER);
 		for (int x = 0; x < this.environment.width; x += 10) {
 			this.environment.g.drawVerticalLine(this.environment.x + x, this.environment.y, this.environment.height);
