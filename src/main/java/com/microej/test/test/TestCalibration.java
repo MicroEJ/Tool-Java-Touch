@@ -1,8 +1,9 @@
-/*
+/**
  * Java
  *
- * Copyright 2017 IS2T. All rights reserved.
- * Use of this source code is governed by a BSD-style license that can be found at http://www.is2t.com/open-source-bsd-license/.
+ * Copyright 2017-2018 IS2T. All rights reserved.
+ *
+ * Use of this source code is subject to license terms.
  */
 package com.microej.test.test;
 
@@ -32,11 +33,11 @@ public class TestCalibration extends AbstractTest {
 
 	@Override
 	public boolean handleEvent(int event) {
-		
+
 		if(super.handleEvent(event)) {
 			return true;
 		}
-		
+
 		Pointer pointer = (Pointer) Event.getGenerator(event);
 		int action = Pointer.getAction(event);
 		switch (action) {
@@ -57,15 +58,15 @@ public class TestCalibration extends AbstractTest {
 		this.pressedY = -ELEMENT_SIZE;
 		super.start();
 	}
-	
+
 	@Override
 	public void paint(GraphicsContext g) {
 		clearScreen(g);
 		super.paint(g);
-		
+
 		// Draw title
 		drawTitle(g, getTitle());
-		
+
 		g.setColor(Colors.SILVER);
 		for (int x = 0; x < getInnerWidth(); x += 10) {
 			g.drawVerticalLine(this.x + x , this.y, this.height);

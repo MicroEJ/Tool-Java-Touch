@@ -1,8 +1,9 @@
-/*
+/**
  * Java
  *
- * Copyright 2017 IS2T. All rights reserved.
- * Use of this source code is governed by a BSD-style license that can be found at http://www.is2t.com/open-source-bsd-license/.
+ * Copyright 2017-2018 IS2T. All rights reserved.
+ *
+ * Use of this source code is subject to license terms.
  */
 package com.microej.test.model;
 
@@ -16,13 +17,13 @@ public class ColorModel {
 	/**
 	 * Defaut background color.
 	 */
-	private int rgbaColor; 
-	
+	private int rgbaColor;
+
 	/**
 	 * List of listeners.
 	 */
-	private List<ColorModelListener> modelListeners;
-	
+	private final List<ColorModelListener> modelListeners;
+
 	/**
 	 * Constructor
 	 */
@@ -30,7 +31,7 @@ public class ColorModel {
 		modelListeners 	= new ArrayList<>();
 		rgbaColor 		= Colors.WHITE;
 	}
-	
+
 	/**
 	 * Sets the default color.
 	 * @param color new background color.
@@ -39,7 +40,7 @@ public class ColorModel {
 		this.rgbaColor = color;
 		fireUpdated();
 	}
-	
+
 	/**
 	 * Returns the default color.
 	 * @return the default color.
@@ -47,7 +48,7 @@ public class ColorModel {
 	public int getColor(){
 		return this.rgbaColor;
 	}
-	
+
 	/**
 	 * Adds a listener to the list that's notified each time a change
 	 * to the data model occurs.
@@ -56,7 +57,7 @@ public class ColorModel {
 	public void addColorModelListener(ColorModelListener colorModelListener){
 		this.modelListeners.add(colorModelListener);
 	}
-	
+
 	/**
 	 *  Notifies all listeners that the background color table's may have changed.
 	 */

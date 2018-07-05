@@ -1,8 +1,9 @@
-/*
+/**
  * Java
  *
- * Copyright 2017 IS2T. All rights reserved.
- * Use of this source code is governed by a BSD-style license that can be found at http://www.is2t.com/open-source-bsd-license/.
+ * Copyright 2017-2018 IS2T. All rights reserved.
+ *
+ * Use of this source code is subject to license terms.
  */
 package com.microej.test.test;
 
@@ -25,7 +26,7 @@ public class TestThreshold extends AbstractTest {
 	private boolean pressed;
 	private boolean dragged;
 	private String message = "" ;
-	
+
 
 	/**
 	 * Initializes environment.
@@ -36,9 +37,10 @@ public class TestThreshold extends AbstractTest {
 
 	@Override
 	public boolean handleEvent(int value) {
-		if(super.handleEvent(value))
+		if(super.handleEvent(value)) {
 			return true;
-		
+		}
+
 		int action = Pointer.getAction(value);
 		switch (action) {
 		case Pointer.PRESSED:
@@ -74,13 +76,13 @@ public class TestThreshold extends AbstractTest {
 		this.message = "";
 		super.start();
 	}
-	
+
 	@Override
 	public void paint(GraphicsContext graphicsContext) {
 		clearScreen(graphicsContext, Colors.WHITE);
 		drawTitle(graphicsContext, getTitle());
 		super.paint(graphicsContext);
-		
+
 		int centerX = this.x + this.width / 2;
 		int centerY = this.y + this.height / 2;
 		int buttonX = centerX - BUTTON_WIDTH / 2;

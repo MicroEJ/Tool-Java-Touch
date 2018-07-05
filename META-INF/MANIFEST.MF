@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Application-Id: ActivityTestPointer
-Application-Version: 1.0.0
-Application-PrintableName: ActivityTestPointer
-Application-Description: ActivityTestPointer
-Application-IconsDirectory: icons
-Application-Activities: com.microej.test.ActivityTestPointer

@@ -1,8 +1,9 @@
-/*
+/**
  * Java
  *
- * Copyright 2017 IS2T. All rights reserved.
- * Use of this source code is governed by a BSD-style license that can be found at http://www.is2t.com/open-source-bsd-license/.
+ * Copyright 2017-2018 IS2T. All rights reserved.
+ *
+ * Use of this source code is subject to license terms.
  */
 package com.microej.test.test;
 
@@ -43,10 +44,11 @@ public class TestTarget extends AbstractTest {
 
 	@Override
 	public boolean handleEvent(int event) {
-		
-		if(super.handleEvent(event))
+
+		if(super.handleEvent(event)) {
 			return true;
-		
+		}
+
 		if (Event.getType(event) == Event.POINTER) {
 			Pointer p = (Pointer) EventGenerator.get(Event.getGeneratorID(event));
 			this.touchedX = p.getX();
@@ -82,7 +84,7 @@ public class TestTarget extends AbstractTest {
 	public void paint(GraphicsContext g) {
 		this.clearScreen(g);
 		super.paint(g);
-		
+
 		if (this.touchedX >= 0) {
 			paintTarget(g, this.targetX, this.targetY, Colors.GRAY);
 			paintTouched(g, this.touchedX, this.touchedY);

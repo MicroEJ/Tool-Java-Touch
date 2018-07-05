@@ -1,8 +1,9 @@
-/*
+/**
  * Java
  *
- * Copyright 2017 IS2T. All rights reserved.
- * Use of this source code is governed by a BSD-style license that can be found at http://www.is2t.com/open-source-bsd-license/.
+ * Copyright 2017-2018 IS2T. All rights reserved.
+ *
+ * Use of this source code is subject to license terms.
  */
 package com.microej.test.test;
 
@@ -25,8 +26,8 @@ public class TestFiltering extends AbstractTest {
 
 	private boolean blink = false;
 
-	private ColorModel model;
-	private Timer timer;
+	private final ColorModel model;
+	private final Timer timer;
 
 	/**
 	 * Initializes environment.

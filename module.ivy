@@ -3,9 +3,8 @@
 -->
 <ivy-module version="2.0" xmlns:ea="http://www.easyant.org" xmlns:m="http://ant.apache.org/ivy/extra"> 
     <info organisation="com.microej.test" module="TestPointer" status="integration" revision="2.0.0">
-        <ea:build organisation="com.is2t.easyant.buildtypes" module="build-application" revision="5.5.+">
-        	<ea:property name="test.run.includes.pattern" value="**/_AllTests_*.class"/>
-        </ea:build>
+		<ea:build organisation="com.is2t.easyant.buildtypes" module="build-microej-javalib" revision="4.+">
+		</ea:build>
     </info>
     
     <configurations defaultconfmapping="default->default;provided->provided">
@@ -29,8 +28,6 @@
 		-->
         <dependency org="ej.api" name="edc" 	rev="[1.2.0-RC0,2.0.0-RC0[" conf="provided->*" />
         <dependency org="ej.api" name="microui" rev="[2.0.0-RC0,2.1.0-RC0[" conf="provided->*"/>
-        <dependency org="ej.library.wadapps" name="framework" rev="[1.2.0-RC0,2.0.0-RC0[" />
-        
                
         <!-- 
         	Test-only dependencies

@@ -1,8 +1,9 @@
-/*
+/**
  * Java
  *
- * Copyright 2017 IS2T. All rights reserved.
- * Use of this source code is governed by a BSD-style license that can be found at http://www.is2t.com/open-source-bsd-license/.
+ * Copyright 2017-2018 IS2T. All rights reserved.
+ *
+ * Use of this source code is subject to license terms.
  */
 package com.microej.test.framework;
 
@@ -23,8 +24,8 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 	protected int x, y;
 	protected int width, height;
 	protected boolean landScape;
-	
-	private int padding = 20;
+
+	private final int padding = 20;
 
 	public AbstractDisplayable(TestManager testManager) {
 		super(Display.getDefaultDisplay());
@@ -34,7 +35,7 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 		int height = getDisplay().getHeight();
 
 		this.landScape = width > height;
-		
+
 		if (landScape) {
 			this.x = padding;
 			this.y = 0;
@@ -63,25 +64,25 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 
 		if (!this.landScape) {
 			int middle_x = width / 2;
-			
+
 			g.setColor(Colors.GRAY);
 			g.fillRect(0, 0, width, padding);
 			g.fillRect(0, height-padding, width, height);
-			
-			
+
+
 			g.setColor(Colors.BLACK);
 			g.drawLine(middle_x - padding, padding,  middle_x, 0);
 			g.drawLine(middle_x + padding, padding,  middle_x, 0);
 			g.drawLine(middle_x - padding, height-padding,  middle_x, height);
 			g.drawLine(middle_x + padding, height-padding,  middle_x, height);
-			
+
 		} else {
 			int middle_y = height / 2;
 
 			g.setColor(Colors.GRAY);
 			g.fillRect(0, 0, padding, height);
 			g.fillRect(width-padding, 0, width, height);
-			
+
 			g.setColor(Colors.BLACK);
 			g.drawLine(0, middle_y, padding - 1, middle_y - padding);
 			g.drawLine(0, middle_y, padding - 1, middle_y + padding);
@@ -124,10 +125,15 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 
 	/**
 	 * Draws a cross at at <code>(x,y)</code> using the specific color.
-	 * @param g GraphicsContext for drawing
-	 * @param color the color of the cross
-	 * @param x the x coordinate of the cross.
-	 * @param y the y coordinate of the cross.
+	 * 
+	 * @param graphicsContext
+	 *            GraphicsContext for drawing
+	 * @param color
+	 *            the color of the cross
+	 * @param x
+	 *            the x coordinate of the cross.
+	 * @param y
+	 *            the y coordinate of the cross.
 	 */
 	protected void drawCross(GraphicsContext graphicsContext, int color, int x, int y) {
 		graphicsContext.setColor(color);
@@ -136,8 +142,11 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 	}
 
 	/**
-	 * Clear the screen with default color (White) @see clearScreen(GraphicsContext, int);
-	 * @param graphicsContext  GraphicsContext for drawing
+	 * Clear the screen with default color (White) @see
+	 * clearScreen(GraphicsContext, int);
+	 * 
+	 * @param g
+	 *            GraphicsContext for drawing
 	 */
 	protected void clearScreen(GraphicsContext g) {
 		this.clearScreen(g, Colors.WHITE);
@@ -153,9 +162,7 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 		graphicsContext.fillRect(0, 0, graphicsContext.getDisplay().getWidth(), graphicsContext.getDisplay().getHeight());
 	}
 
-	/**
-	 * Handle event
-	 */
+	@Override
 	public boolean handleEvent(int event) {
 		if (Event.getType(event) == Event.POINTER) {
 			Pointer pointer = (Pointer) EventGenerator.get(Event.getGeneratorID(event));
@@ -183,9 +190,9 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Draws the title at the top of display 
+	 * Draws the title at the top of display
 	 * @param graphicsContext GraphicsContext for drawing
 	 * @param title String to draw
 	 */
@@ -193,7 +200,7 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 		graphicsContext.setColor(Colors.BLACK);
 		graphicsContext.drawString(title, width / 2  + x, 10, GraphicsContext.HCENTER | GraphicsContext.VCENTER);
 	}
-	
+
 	@Override
 	/** Warning : Need to define this method, Kernel Exception */
 	public EventHandler getController() {
