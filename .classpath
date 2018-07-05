@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry kind="var" path="EDC-1.2"/>
-	<classpathentry kind="var" path="MICROUI-1.5.0"/>
-	<classpathentry kind="var" path="LOGGING-LIGHTWEIGHT-2.0"/>
+	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=TestTouchApp&amp;ivyXmlPath=module.ivy&amp;confs=*"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
