@@ -1,2 +1,4 @@
 /bin/
 src/.generated~/
+target~/
+src-adpgenerated/
