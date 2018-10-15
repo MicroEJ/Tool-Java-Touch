@@ -2,5 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=TestTouchApp&amp;ivyXmlPath=module.ivy&amp;confs=*"/>
+	<classpathentry kind="src" path="src-adpgenerated/junit/java">
+		<attributes>
+			<attribute name="addonProcessorKind" value="generatedJava"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
