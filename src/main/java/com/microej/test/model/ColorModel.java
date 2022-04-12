@@ -1,9 +1,8 @@
 /**
  * Java
  *
- * Copyright 2017-2018 IS2T. All rights reserved.
- *
- * Use of this source code is subject to license terms.
+ * Copyright 2017-2021 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 package com.microej.test.model;
 
@@ -12,10 +11,13 @@ import java.util.List;
 
 import ej.microui.display.Colors;
 
+/**
+ * Model holding color changes done by the test(s).
+ */
 public class ColorModel {
 
 	/**
-	 * Defaut background color.
+	 * Default background color.
 	 */
 	private int rgbaColor;
 
@@ -25,9 +27,9 @@ public class ColorModel {
 	private final List<ColorModelListener> modelListeners;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 */
-	public ColorModel(){
+	public ColorModel() {
 		modelListeners 	= new ArrayList<>();
 		rgbaColor 		= Colors.WHITE;
 	}
@@ -36,7 +38,7 @@ public class ColorModel {
 	 * Sets the default color.
 	 * @param color new background color.
 	 */
-	public void setColor(int color){
+	public void setColor(int color) {
 		this.rgbaColor = color;
 		fireUpdated();
 	}
@@ -45,7 +47,7 @@ public class ColorModel {
 	 * Returns the default color.
 	 * @return the default color.
 	 */
-	public int getColor(){
+	public int getColor() {
 		return this.rgbaColor;
 	}
 
@@ -54,14 +56,14 @@ public class ColorModel {
 	 * to the data model occurs.
 	 * @param colorModelListener the ColorModelListener
 	 */
-	public void addColorModelListener(ColorModelListener colorModelListener){
+	public void addColorModelListener(ColorModelListener colorModelListener) {
 		this.modelListeners.add(colorModelListener);
 	}
 
 	/**
 	 *  Notifies all listeners that the background color table's may have changed.
 	 */
-	protected void fireUpdated(){
+	protected void fireUpdated() {
 		for(ColorModelListener  modelListener : modelListeners){
 			modelListener.updated();
 		}

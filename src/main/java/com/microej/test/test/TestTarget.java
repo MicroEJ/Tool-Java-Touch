@@ -1,9 +1,8 @@
 /**
  * Java
  *
- * Copyright 2017-2018 IS2T. All rights reserved.
- *
- * Use of this source code is subject to license terms.
+ * Copyright 2017-2021 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 package com.microej.test.test;
 
@@ -11,35 +10,52 @@ import com.microej.test.framework.AbstractTest;
 import com.microej.test.framework.TestManager;
 
 import ej.microui.display.Colors;
+import ej.microui.display.Font;
 import ej.microui.display.GraphicsContext;
+import ej.microui.display.Painter;
 import ej.microui.event.Event;
 import ej.microui.event.EventGenerator;
+import ej.microui.event.generator.Buttons;
 import ej.microui.event.generator.Pointer;
-import ej.microui.util.EventHandler;
 
+/**
+ * Tests the targeting with a Pointer.
+ */
 public class TestTarget extends AbstractTest {
+
+	private static final int DIST_TO_CROSS_BAR_START = 20;
+
+	private static final int CROSS_BAR_LENGTH = 40;
+
+	private static final int CROSS_BAR_THICKNESS = 4;
+
+	private static final int CIRCLE_RADIUS_DECREASE = 5;
 
 	private static final String NAME = "Target";
 
-	int color;
-	int counter;
-	private int touchedX = -1;
-	private int touchedY = -1;
-	private int targetX;
-	private int targetY;
-	private int newTargetX;
-	private int newTargetY;
+	private static final String Y_ASSIGN = " y = ";
+
+	private int touchedX;
+	private int touchedY;
+	private int previousTargetX;
+	private int previousTargetY;
+	private int currentTargetX;
+	private int currentTargetY;
 
 	private int deltaX;
 	private int deltaY;
 
+	/**
+	 * Initializes environment.
+	 *
+	 * @param testManager the provided testManager
+	 */
 	public TestTarget(TestManager testManager) {
 		super(NAME, testManager);
-
-		this.color = Colors.RED;
-		this.counter = 0;
-		this.newTargetX = this.width / 2;
-		this.newTargetY = this.height / 2;
+		this.currentTargetX = super.getInnerWidth() / 2;
+		this.currentTargetY = super.getInnerHeight() / 2;
+		this.touchedX = -1;
+		this.touchedY = -1;
 	}
 
 	@Override
@@ -49,30 +65,30 @@ public class TestTarget extends AbstractTest {
 			return true;
 		}
 
-		if (Event.getType(event) == Event.POINTER) {
-			Pointer p = (Pointer) EventGenerator.get(Event.getGeneratorID(event));
+		if (Event.getType(event) == Pointer.EVENT_TYPE) {
+			Pointer p = (Pointer) EventGenerator.get(Event.getGeneratorId(event));
 			this.touchedX = p.getX();
 			this.touchedY = p.getY();
-			if (Pointer.isPressed(event)) {
-				this.deltaX = this.touchedX - this.newTargetX;
-				this.deltaY = this.touchedY - this.newTargetY;
+			if (Buttons.isPressed(event)) {
+				this.deltaX = this.touchedX - this.currentTargetX;
+				this.deltaY = this.touchedY - this.currentTargetY;
 
-				System.out.println("Pointer is pressed: x = " + this.touchedX + " y = " + this.touchedY);
-				if ((this.targetX == this.touchedX) && (this.targetY == this.touchedY)) {
+				System.out.println("Pointer is pressed: x = " + this.touchedX + Y_ASSIGN + this.touchedY);
+				if ((this.currentTargetX == this.touchedX) && (this.currentTargetY == this.touchedY)) {
 					System.out.println("Perfect hit !");
 				} else {
 					System.out.println("deltaX = " + (this.deltaX) + " deltaY = " + (this.deltaY));
 				}
-			} else if (Pointer.isReleased(event)) {
-				System.out.println("Pointer is released: x = " + this.touchedX + " y = " + this.touchedY);
-				this.targetX = this.newTargetX;
-				this.targetY = this.newTargetY;
-				this.newTargetX = (int) (Math.random() * this.width) + this.x;
-				this.newTargetY = (int) (Math.random() * this.height) + this.y;
-				System.out.println("New Target: x = " + this.newTargetX + " y = " + this.newTargetY);
-				repaint();
+			} else if (Buttons.isReleased(event)) {
+				System.out.println("Pointer is released: x = " + this.touchedX + Y_ASSIGN + this.touchedY);
+				this.previousTargetX = this.currentTargetX;
+				this.previousTargetY = this.currentTargetY;
+				this.currentTargetX = (int) (Math.random() * getInnerWidth()) + getX();
+				this.currentTargetY = (int) (Math.random() * getInnerHeight()) + getY();
+				System.out.println("New Target: x = " + this.currentTargetX + Y_ASSIGN + this.currentTargetY);
+				requestRender();
 			} else if (Pointer.isDragged(event)) {
-				System.out.println("Pointer is dragged: x = " + this.touchedX + " y = " + this.touchedY);
+				System.out.println("Pointer is dragged: x = " + this.touchedX + Y_ASSIGN + this.touchedY);
 			}
 
 			return true;
@@ -81,58 +97,55 @@ public class TestTarget extends AbstractTest {
 	}
 
 	@Override
-	public void paint(GraphicsContext g) {
+	public void render(GraphicsContext g) {
 		this.clearScreen(g);
-		super.paint(g);
+		super.render(g);
+		drawTitle(g, getTitle());
 
 		if (this.touchedX >= 0) {
-			paintTarget(g, this.targetX, this.targetY, Colors.GRAY);
+			paintTarget(g, this.previousTargetX, this.previousTargetY, Colors.GRAY);
 			paintTouched(g, this.touchedX, this.touchedY);
 		}
-		paintTarget(g, this.newTargetX, this.newTargetY, Colors.BLACK);
+		paintTarget(g, this.currentTargetX, this.currentTargetY, Colors.BLACK);
 		paintDelta(g);
 	}
 
 	private void paintTarget(GraphicsContext g, int x, int y, int color) {
 		g.setColor(Colors.WHITE);
-
-		int radius = Math.min(this.height / 10, this.width / 10);
-		g.fillCircle(x - radius, y - radius, radius * 2);
+		final int tenthOfScreenHeight = getInnerHeight() / 10;
+		final int tenthOfScreenWidth = getInnerWidth() / 10;
+		int radius = Math.min(tenthOfScreenHeight, tenthOfScreenWidth);
+		Painter.fillCircle(g, x - radius, y - radius, radius * 2);
 		g.setColor(color);
-		g.drawCircle(x - radius, y - radius, radius * 2);
-		radius -= 5;
-		g.fillCircle(x - radius, y - radius, radius * 2);
-		radius -= 5;
+		Painter.drawCircle(g, x - radius, y - radius, radius * 2);
+		radius -= CIRCLE_RADIUS_DECREASE;
+		Painter.fillCircle(g, x - radius, y - radius, radius * 2);
+		radius -= CIRCLE_RADIUS_DECREASE;
 		g.setColor(Colors.WHITE);
-		g.fillCircle(x - radius, y - radius, radius * 2);
-		radius -= 5;
+		Painter.fillCircle(g, x - radius, y - radius, radius * 2);
+		radius -= CIRCLE_RADIUS_DECREASE;
 		g.setColor(color);
-		g.fillCircle(x - radius, y - radius, radius * 2);
-		radius -= 5;
+		Painter.fillCircle(g, x - radius, y - radius, radius * 2);
+		radius -= CIRCLE_RADIUS_DECREASE;
 		g.setColor(Colors.WHITE);
-		g.fillCircle(x - radius, y - radius, radius * 2);
-		radius -= 5;
+		Painter.fillCircle(g, x - radius, y - radius, radius * 2);
+		radius -= CIRCLE_RADIUS_DECREASE;
 		g.setColor(color);
-		g.fillCircle(x - radius, y - radius, radius * 2);
+		Painter.fillCircle(g, x - radius, y - radius, radius * 2);
 
-		g.drawLine(x, y - radius, x, y + radius);
-		g.drawLine(x - radius, y, x + radius, y);
+		Painter.drawLine(g, x, y - radius, x, y + radius);
+		Painter.drawLine(g, x - radius, y, x + radius, y);
 	}
 
 	private void paintTouched(GraphicsContext g, int x, int y) {
 		g.setColor(Colors.RED);
-		g.fillRect(x - 2, y - 20, 4, 40);
-		g.fillRect(x - 20, y - 2, 40, 4);
+		Painter.fillRectangle(g, x - 2, y - DIST_TO_CROSS_BAR_START, CROSS_BAR_THICKNESS, CROSS_BAR_LENGTH);
+		Painter.fillRectangle(g, x - DIST_TO_CROSS_BAR_START, y - 2, CROSS_BAR_LENGTH, CROSS_BAR_THICKNESS);
 	}
 
 	private void paintDelta(GraphicsContext g) {
 		g.setColor(Colors.BLACK);
-		g.drawString("Delta X : " + this.deltaX + "px - Delta Y : " + this.deltaY + " px", this.x,
-				this.y, GraphicsContext.TOP | GraphicsContext.LEFT);
-	}
-
-	@Override
-	public EventHandler getController() {
-		return this;
+		Painter.drawString(g, "Delta X : " + this.deltaX + "px - Delta Y : " + this.deltaY + " px",
+				Font.getDefaultFont(), getX(), getY());
 	}
 }

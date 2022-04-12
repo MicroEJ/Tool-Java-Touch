@@ -1,51 +1,72 @@
 /**
  * Java
  *
- * Copyright 2017-2018 IS2T. All rights reserved.
- *
- * Use of this source code is subject to license terms.
+ * Copyright 2017-2021 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 package com.microej.test.framework;
 
 import ej.microui.display.Colors;
 import ej.microui.display.Display;
 import ej.microui.display.Displayable;
+import ej.microui.display.Font;
 import ej.microui.display.GraphicsContext;
+import ej.microui.display.Painter;
 import ej.microui.event.Event;
 import ej.microui.event.EventGenerator;
+import ej.microui.event.generator.Buttons;
 import ej.microui.event.generator.Pointer;
-import ej.microui.util.EventHandler;
 
-public abstract class AbstractDisplayable extends Displayable implements EventHandler {
+/**
+ * Represents a displayable test. Contains all generic methods needed.
+ */
+public abstract class AbstractDisplayable extends Displayable {
 
-	public static final int ELEMENT_SIZE = 10;
+	private static final int SIDE_BAR_WIDTH = 20;
+	private static final int TITLE_UPPER_PADDING = 10;
+	private static final int TITLE_CORNER_PADDING = 5;
 
-	protected TestManager testManager;
-	protected int x, y;
-	protected int width, height;
-	protected boolean landScape;
+	/**
+	 * Size (length) of one bar of the cross needed in some of the tests.
+	 */
+	protected static final int ELEMENT_SIZE = 10;
 
-	private final int padding = 20;
+	private final TestManager testManager;
+	private int x;
+	private int y;
+	private int width;
+	private int height;
 
+	/**
+	 * The mode of the display. True if landscape, false otherwise (which means
+	 * portrait).
+	 */
+	private final boolean landScape;
+
+	/**
+	 * Constructor. Includes the testManager to navigate to the next or previous
+	 * test.
+	 *
+	 * @param testManager the testManager.
+	 */
 	public AbstractDisplayable(TestManager testManager) {
-		super(Display.getDefaultDisplay());
 		this.testManager = testManager;
 
-		int width = getDisplay().getWidth();
-		int height = getDisplay().getHeight();
+		int width = Display.getDisplay().getWidth();
+		int height = Display.getDisplay().getHeight();
 
 		this.landScape = width > height;
 
 		if (landScape) {
-			this.x = padding;
+			this.x = SIDE_BAR_WIDTH;
 			this.y = 0;
-			this.width = width - (padding * 2);
+			this.width = width - (SIDE_BAR_WIDTH * 2);
 			this.height = height;
 		} else {
 			this.x = 0;
-			this.y = padding;
+			this.y = SIDE_BAR_WIDTH;
 			this.width = width;
-			this.height = height - (padding * 2);
+			this.height = height - (SIDE_BAR_WIDTH * 2);
 		}
 	}
 
@@ -58,36 +79,54 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 	}
 
 	@Override
-	public void paint(GraphicsContext g) {
-		int width = getDisplay().getWidth();
-		int height = getDisplay().getHeight();
+	public void render(GraphicsContext g) {
+		int width = Display.getDisplay().getWidth();
+		int height = Display.getDisplay().getHeight();
 
 		if (!this.landScape) {
-			int middle_x = width / 2;
+			int middleX = width / 2;
 
 			g.setColor(Colors.GRAY);
-			g.fillRect(0, 0, width, padding);
-			g.fillRect(0, height-padding, width, height);
-
+			Painter.fillRectangle(g, 0, 0, width, SIDE_BAR_WIDTH);
+			Painter.fillRectangle(g, 0, height - SIDE_BAR_WIDTH, width, height);
 
 			g.setColor(Colors.BLACK);
-			g.drawLine(middle_x - padding, padding,  middle_x, 0);
-			g.drawLine(middle_x + padding, padding,  middle_x, 0);
-			g.drawLine(middle_x - padding, height-padding,  middle_x, height);
-			g.drawLine(middle_x + padding, height-padding,  middle_x, height);
+			int leftUpperNavStartX = middleX - SIDE_BAR_WIDTH;
+			int leftUpperNavStartY = SIDE_BAR_WIDTH - 1;
+			int rightUpperNavStartX = middleX + SIDE_BAR_WIDTH;
+			int rightUpperNavStartY = SIDE_BAR_WIDTH - 1;
+			Painter.drawLine(g, leftUpperNavStartX, leftUpperNavStartY, middleX, 0); // Left upper arrow part
+			Painter.drawLine(g, rightUpperNavStartX, rightUpperNavStartY, middleX, 0); // Right upper arrow part
+
+			int leftLowerNavStartX = middleX - SIDE_BAR_WIDTH;
+			int leftLowerNavStartY = height - SIDE_BAR_WIDTH;
+			int rightLowerNavStartX = middleX + SIDE_BAR_WIDTH;
+			int rightLowerNavStartY = height - SIDE_BAR_WIDTH;
+			Painter.drawLine(g, leftLowerNavStartX, leftLowerNavStartY, middleX, height); // L. lower arrow part
+			Painter.drawLine(g, rightLowerNavStartX, rightLowerNavStartY, middleX, height); // R. lower arrow part
 
 		} else {
-			int middle_y = height / 2;
+			int middleY = height / 2;
 
 			g.setColor(Colors.GRAY);
-			g.fillRect(0, 0, padding, height);
-			g.fillRect(width-padding, 0, width, height);
+			Painter.fillRectangle(g, 0, 0, SIDE_BAR_WIDTH, height);
+			Painter.fillRectangle(g, width - SIDE_BAR_WIDTH, 0, width, height);
 
 			g.setColor(Colors.BLACK);
-			g.drawLine(0, middle_y, padding - 1, middle_y - padding);
-			g.drawLine(0, middle_y, padding - 1, middle_y + padding);
-			g.drawLine(width, middle_y, width - padding, middle_y - padding);
-			g.drawLine(width, middle_y, width - padding, middle_y + padding);
+
+			int lowerLeftNavEndX = SIDE_BAR_WIDTH - 1;
+			int upperLeftNavEndX = SIDE_BAR_WIDTH - 1;
+			int upperLeftNavEndY = middleY + SIDE_BAR_WIDTH - 1;
+			int lowerLeftNavEndY = middleY - SIDE_BAR_WIDTH + 1;
+			Painter.drawLine(g, 0, middleY, lowerLeftNavEndX, lowerLeftNavEndY); // Lower arrow part
+			Painter.drawLine(g, 0, middleY, upperLeftNavEndX, upperLeftNavEndY); // Upper arrow part
+
+			int upperRightNavEndX = width - SIDE_BAR_WIDTH;
+			int upperRightNavEndY = middleY - SIDE_BAR_WIDTH;
+			int lowerRightNavEndX = width - SIDE_BAR_WIDTH;
+			int lowerRightNavEndY = middleY + SIDE_BAR_WIDTH - 1;
+			Painter.drawLine(g, width, middleY, upperRightNavEndX, upperRightNavEndY); // Upper arrow part
+			Painter.drawLine(g, width, middleY - 1, lowerRightNavEndX, lowerRightNavEndY); // Lower arrow part
 		}
 	}
 
@@ -125,7 +164,7 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 
 	/**
 	 * Draws a cross at at <code>(x,y)</code> using the specific color.
-	 * 
+	 *
 	 * @param graphicsContext
 	 *            GraphicsContext for drawing
 	 * @param color
@@ -137,51 +176,54 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 	 */
 	protected void drawCross(GraphicsContext graphicsContext, int color, int x, int y) {
 		graphicsContext.setColor(color);
-		graphicsContext.drawLine(x - ELEMENT_SIZE / 2, y - ELEMENT_SIZE / 2, x + ELEMENT_SIZE / 2, y + ELEMENT_SIZE / 2);
-		graphicsContext.drawLine(x + ELEMENT_SIZE / 2, y - ELEMENT_SIZE / 2, x - ELEMENT_SIZE / 2, y + ELEMENT_SIZE / 2);
+		Painter.drawLine(graphicsContext, x - ELEMENT_SIZE / 2, y - ELEMENT_SIZE / 2, x + ELEMENT_SIZE / 2,
+				y + ELEMENT_SIZE / 2);
+		Painter.drawLine(graphicsContext, x + ELEMENT_SIZE / 2, y - ELEMENT_SIZE / 2, x - ELEMENT_SIZE / 2,
+				y + ELEMENT_SIZE / 2);
 	}
 
 	/**
-	 * Clear the screen with default color (White) @see
-	 * clearScreen(GraphicsContext, int);
-	 * 
-	 * @param g
-	 *            GraphicsContext for drawing
+	 * Clears the screen with default color (White).
+	 *
+	 * @see clearScreen(GraphicsContext, int);
+	 *
+	 * @param g GraphicsContext for drawing
 	 */
 	protected void clearScreen(GraphicsContext g) {
 		this.clearScreen(g, Colors.WHITE);
 	}
 
 	/**
-	 * Clear the screen.
+	 * Clears the screen.
+	 *
 	 * @param graphicsContext GraphicsContext for drawing
-	 * @param rgbColor new color of background
+	 * @param rgbColor        new color of background
 	 */
 	protected void clearScreen(GraphicsContext graphicsContext, int rgbColor) {
 		graphicsContext.setColor(rgbColor);
-		graphicsContext.fillRect(0, 0, graphicsContext.getDisplay().getWidth(), graphicsContext.getDisplay().getHeight());
+		Painter.fillRectangle(graphicsContext, 0, 0, graphicsContext.getWidth(), graphicsContext.getHeight());
 	}
 
 	@Override
 	public boolean handleEvent(int event) {
-		if (Event.getType(event) == Event.POINTER) {
-			Pointer pointer = (Pointer) EventGenerator.get(Event.getGeneratorID(event));
+		if (Event.getType(event) == Pointer.EVENT_TYPE) {
+			Pointer pointer = (Pointer) EventGenerator.get(Event.getGeneratorId(event));
 			int pointerX = pointer.getX();
 			int pointerY = pointer.getY();
-			if (Pointer.isReleased(event)) {
+			if (Buttons.isReleased(event)) {
 				if (landScape) {
-					if (pointerX < padding) {
+					if (pointerX < SIDE_BAR_WIDTH) {
 						testManager.showPreviousTest();
 						return true;
-					} else if (pointerX > width + padding) {
+					} else if (pointerX > width + SIDE_BAR_WIDTH) {
 						testManager.showNextTest();
 						return true;
 					}
 				} else {
-					if ((pointerY < padding)) {
+					if ((pointerY < SIDE_BAR_WIDTH)) {
 						testManager.showPreviousTest();
 						return true;
-					} else if (pointerY > height - padding) {
+					} else if (pointerY > height - SIDE_BAR_WIDTH) {
 						testManager.showNextTest();
 						return true;
 					}
@@ -192,18 +234,18 @@ public abstract class AbstractDisplayable extends Displayable implements EventHa
 	}
 
 	/**
-	 * Draws the title at the top of display
+	 * Draws the title at the top of display.
+	 *
 	 * @param graphicsContext GraphicsContext for drawing
-	 * @param title String to draw
+	 * @param title           String to draw
 	 */
 	protected void drawTitle(GraphicsContext graphicsContext, String title) {
 		graphicsContext.setColor(Colors.BLACK);
-		graphicsContext.drawString(title, width / 2  + x, 10, GraphicsContext.HCENTER | GraphicsContext.VCENTER);
-	}
-
-	@Override
-	/** Warning : Need to define this method, Kernel Exception */
-	public EventHandler getController() {
-		return null;
+		if (isLandScape()) {
+			Painter.drawString(graphicsContext, title, Font.getDefaultFont(), width / 2, TITLE_UPPER_PADDING);
+		} else { // e. g. Portrait
+			Painter.drawString(graphicsContext, title, Font.getDefaultFont(), getX() + TITLE_CORNER_PADDING,
+					TITLE_CORNER_PADDING);
+		}
 	}
 }

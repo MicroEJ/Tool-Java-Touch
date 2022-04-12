@@ -1,9 +1,8 @@
 /**
  * Java
  *
- * Copyright 2017-2018 IS2T. All rights reserved.
- *
- * Use of this source code is subject to license terms.
+ * Copyright 2017-2021 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 package com.microej.test.test;
 
@@ -16,13 +15,15 @@ import ej.bon.Timer;
 import ej.bon.TimerTask;
 import ej.microui.display.Colors;
 import ej.microui.display.GraphicsContext;
+import ej.microui.event.generator.Buttons;
 import ej.microui.event.generator.Pointer;
-import ej.microui.util.EventHandler;
 
 /**
  * Tests the dragging events distribution.
  */
 public class TestFiltering extends AbstractTest {
+
+	private static final int DELAY_IN_MILLIS = 10;
 
 	private boolean blink = false;
 
@@ -31,6 +32,8 @@ public class TestFiltering extends AbstractTest {
 
 	/**
 	 * Initializes environment.
+	 *
+	 * @param testManager the provided testManager
 	 */
 	public TestFiltering(TestManager testManager) {
 		super("Filtering", testManager);
@@ -39,7 +42,7 @@ public class TestFiltering extends AbstractTest {
 		this.model.addColorModelListener(new ColorModelListener() {
 			@Override
 			public void updated() {
-				repaint();
+				requestRender();
 			}
 		});
 	}
@@ -51,28 +54,24 @@ public class TestFiltering extends AbstractTest {
 			return true;
 		}
 
-		int action = Pointer.getAction(event);
-		switch (action) {
-		case Pointer.PRESSED:
+		int action = Buttons.getAction(event);
+		if ((action == Buttons.PRESSED) || (action == Buttons.RELEASED)) {
 			this.blink = false;
 			this.model.setColor(Colors.WHITE);
-			break;
-		case Pointer.DRAGGED:
+			return false;
+		} else if (action == Pointer.DRAGGED) {
 			this.blink = true;
 			this.model.setColor(Colors.RED);
 			return true;
-		case Pointer.RELEASED:
-			this.blink = false;
-			this.model.setColor(Colors.WHITE);
-			break;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	@Override
-	public void paint(GraphicsContext g) {
+	public void render(GraphicsContext g) {
 		clearScreen(g, this.model.getColor());
-		super.paint(g);
+		super.render(g);
 		drawTitle(g, getTitle());
 		if (this.blink) {
 			timer.schedule(new TimerTask() {
@@ -80,12 +79,7 @@ public class TestFiltering extends AbstractTest {
 				public void run() {
 					model.setColor(Colors.WHITE);
 				}
-			}, 10);
+			}, DELAY_IN_MILLIS);
 		}
-	}
-
-	@Override
-	public EventHandler getController() {
-		return this;
 	}
 }

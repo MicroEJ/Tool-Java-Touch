@@ -1,9 +1,8 @@
 /**
  * Java
  *
- * Copyright 2017-2018 IS2T. All rights reserved.
- *
- * Use of this source code is subject to license terms.
+ * Copyright 2017-2021 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 package com.microej.test.test;
 
@@ -11,25 +10,31 @@ import com.microej.test.framework.AbstractTest;
 import com.microej.test.framework.TestManager;
 
 import ej.microui.display.Colors;
+import ej.microui.display.Font;
 import ej.microui.display.GraphicsContext;
+import ej.microui.display.Painter;
+import ej.microui.event.generator.Buttons;
 import ej.microui.event.generator.Pointer;
-import ej.microui.util.EventHandler;
 
 /**
- * Tests the dragging events distribution.
+ * Tests the dragging sensitivity.
  */
 public class TestThreshold extends AbstractTest {
 
 	private static final int BUTTON_WIDTH = 100;
 	private static final int BUTTON_HEIGHT = 30;
+	private static final int MESSAGE_PADDING = 4; // To center the message
+	private static final String EMPTY_STRING = "";
+	private static final int TEXT_POSITION_SHRINK_FACTOR = 6;
 
 	private boolean pressed;
 	private boolean dragged;
-	private String message = "" ;
-
+	private String message = EMPTY_STRING;
 
 	/**
 	 * Initializes environment.
+	 *
+	 * @param testManager the provided testManager
 	 */
 	public TestThreshold(TestManager testManager) {
 		super("Threshold", testManager);
@@ -41,29 +46,29 @@ public class TestThreshold extends AbstractTest {
 			return true;
 		}
 
-		int action = Pointer.getAction(value);
+		int action = Buttons.getAction(value);
 		switch (action) {
-		case Pointer.PRESSED:
-			this.message = "";
+		case Buttons.PRESSED:
+			this.message = EMPTY_STRING;
 			this.pressed = true;
 			this.dragged = false;
-			repaint();
+			requestRender();
 			return true;
 		case Pointer.DRAGGED:
 			if (this.pressed) {
 				this.pressed = false;
 				this.dragged = true;
 				this.message = "NOK: Pressed then moved";
-				repaint();
+				requestRender();
 			}
 			return true;
-		case Pointer.RELEASED:
+		case Buttons.RELEASED:
 			if (this.pressed && !this.dragged) {
 				this.message = "OK";
 			}
 			this.dragged = false;
 			this.pressed = false;
-			repaint();
+			requestRender();
 			return true;
 		}
 		return false;
@@ -73,22 +78,22 @@ public class TestThreshold extends AbstractTest {
 	public void start() {
 		this.pressed = false;
 		this.dragged = false;
-		this.message = "";
+		this.message = EMPTY_STRING;
 		super.start();
 	}
 
 	@Override
-	public void paint(GraphicsContext graphicsContext) {
+	public void render(GraphicsContext graphicsContext) {
 		clearScreen(graphicsContext, Colors.WHITE);
 		drawTitle(graphicsContext, getTitle());
-		super.paint(graphicsContext);
+		super.render(graphicsContext);
 
-		int centerX = this.x + this.width / 2;
-		int centerY = this.y + this.height / 2;
+		int centerX = getX() + getInnerWidth() / 2;
+		int centerY = getY() + getInnerHeight() / 2;
 		int buttonX = centerX - BUTTON_WIDTH / 2;
 		int buttonY = centerY - BUTTON_HEIGHT / 2;
 		graphicsContext.setColor(Colors.BLACK);
-		graphicsContext.drawRect(buttonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+		Painter.drawRectangle(graphicsContext, buttonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 		int buttonColor;
 		if (this.pressed) {
 			buttonColor = Colors.SILVER;
@@ -98,16 +103,15 @@ public class TestThreshold extends AbstractTest {
 			buttonColor = Colors.GRAY;
 		}
 		graphicsContext.setColor(buttonColor);
-		graphicsContext.fillRect(buttonX + 1, buttonY + 1, BUTTON_WIDTH - 1, BUTTON_HEIGHT - 1);
-		graphicsContext.setColor(Colors.BLACK);
-		graphicsContext.drawString("Button", centerX, centerY, GraphicsContext.HCENTER | GraphicsContext.VCENTER);
-		graphicsContext.setColor(Colors.BLACK);
-		graphicsContext.drawString(this.message, centerX, centerY - BUTTON_HEIGHT,
-				GraphicsContext.HCENTER | GraphicsContext.VCENTER);
-	}
+		Painter.fillRectangle(graphicsContext, buttonX + 1, buttonY + 1, BUTTON_WIDTH - 1, BUTTON_HEIGHT - 1);
 
-	@Override
-	public EventHandler getController() {
-		return this;
+		int buttonTextPosX = centerX - BUTTON_WIDTH / TEXT_POSITION_SHRINK_FACTOR;
+		int buttonTextPosY = centerY - BUTTON_HEIGHT / TEXT_POSITION_SHRINK_FACTOR;
+		graphicsContext.setColor(Colors.BLACK);
+		Painter.drawString(graphicsContext, "Button", Font.getDefaultFont(), buttonTextPosX, buttonTextPosY);
+		graphicsContext.setColor(Colors.BLACK);
+		Painter.drawString(graphicsContext, this.message, Font.getDefaultFont(),
+				centerX - MESSAGE_PADDING - this.message.length() * 2,
+				centerY - BUTTON_HEIGHT);
 	}
 }

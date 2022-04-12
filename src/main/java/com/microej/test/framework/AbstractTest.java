@@ -1,11 +1,12 @@
 /**
  * Java
  *
- * Copyright 2017-2018 IS2T. All rights reserved.
- *
- * Use of this source code is subject to license terms.
+ * Copyright 2017-2021 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 package com.microej.test.framework;
+
+import ej.microui.display.Display;
 
 /**
  * Common implementation of a test.
@@ -16,6 +17,9 @@ public abstract class AbstractTest extends AbstractDisplayable implements Test  
 
 	/**
 	 * Initializes environment.
+	 *
+	 * @param name        the name of the test
+	 * @param testManager the provided testManager
 	 */
 	public AbstractTest(String name, TestManager testManager) {
 		super(testManager);
@@ -29,11 +33,11 @@ public abstract class AbstractTest extends AbstractDisplayable implements Test  
 
 	@Override
 	public void start() {
-		show();
+		Display.getDisplay().requestShow(this);
 	}
 
 	@Override
 	public void stop() {
-		// Nothing to do;
+		// Nothing to do.
 	}
 }
